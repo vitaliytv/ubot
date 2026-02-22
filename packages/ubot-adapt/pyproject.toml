@@ -17,6 +17,10 @@ dev = [
     "ruff>=0.6.0",
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
 [project.scripts]
 ubot-adapt = "ubot_adapt.main:main"
 

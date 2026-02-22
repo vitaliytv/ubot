@@ -33,6 +33,9 @@ jobs:
       - name: Tests (ubot-extract-from-pdf)
         run: uv run --package ubot-extract-from-pdf pytest packages/ubot-extract-from-pdf -v
 
+      - name: Tests (ubot-adapt)
+        run: uv run --package ubot-adapt pytest packages/ubot-adapt -v
+
   build:
     runs-on: ubuntu-latest
     needs: test

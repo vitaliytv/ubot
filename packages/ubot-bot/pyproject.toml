@@ -28,3 +28,4 @@ packages = ["src/ubot_bot"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+asyncio_mode = "auto"
