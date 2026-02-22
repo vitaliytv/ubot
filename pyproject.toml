@@ -1,0 +1,32 @@
+[project]
+name = "ubot"
+version = "0.1.0"
+description = "Телеграм-бот асистент: експорт тексту з PDF (monorepo)"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "ubot-bot",
+    "ubot-extract-from-pdf",
+    "ubot-adapt",
+    "poethepoet>=0.25.0",
+]
+
+[tool.uv.sources]
+ubot-bot = { workspace = true }
+ubot-extract-from-pdf = { workspace = true }
+ubot-adapt = { workspace = true }
+
+[tool.uv.workspace]
+members = ["packages/ubot-bot", "packages/ubot-extract-from-pdf", "packages/ubot-adapt"]
+
+[tool.poe]
+envfile = ".env"
+
+[tool.poe.tasks]
+bot = "uv run ubot-bot"
+extract-from-pdf = "uv run ubot-extract-from-pdf"
+adapt = "uv run ubot-adapt"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100

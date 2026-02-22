@@ -1,0 +1,30 @@
+# KEDA: масштабування тільки коли в Redis є задачі (черга ubot:tasks).
+# Потрібно: KEDA встановлено в кластер, секрет ubot-secrets містить redis-address (host:port), redis-password (опційно).
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: ubot-extract-from-pdf-redis-auth
+spec:
+  secretTargetRef:
+    - parameter: password
+      name: ubot-secrets
+      key: redis-password
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ubot-extract-from-pdf
+spec:
+  scaleTargetRef:
+    name: ubot-extract-from-pdf
+  minReplicaCount: 0
+  maxReplicaCount: 10
+  triggers:
+    - type: redis
+      metadata:
+        addressFromEnv: REDIS_ADDRESS
+        listName: ubot:tasks
+        listLength: "1"
+        activationListLength: "1"
+      authenticationRef:
+        name: ubot-extract-from-pdf-redis-auth

@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubot-adapt
+  labels:
+    app: ubot-adapt
+spec:
+  replicas: 0   # KEDA керує кількістю реплік за довжиною черги Redis
+  selector:
+    matchLabels:
+      app: ubot-adapt
+  template:
+    metadata:
+      labels:
+        app: ubot-adapt
+    spec:
+      nodeSelector:
+        preem: "true"
+      containers:
+        - name: ubot-adapt
+          image: ubot-adapt:latest   # напр. gcr.io/PROJECT_ID/ubot-adapt:latest
+          env:
+            - name: TELEGRAM_API_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-api-id
+            - name: TELEGRAM_API_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-api-hash
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-bot-token
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: redis-url
+            # Для KEDA: host:port
+            - name: REDIS_ADDRESS
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: redis-address
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: hf-token
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+            limits:
+              memory: "16Gi"
+              cpu: "4000m"
+      restartPolicy: Always

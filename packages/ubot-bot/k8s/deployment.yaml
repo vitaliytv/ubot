@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubot-bot
+  labels:
+    app: ubot-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubot-bot
+  template:
+    metadata:
+      labels:
+        app: ubot-bot
+    spec:
+      containers:
+        - name: ubot-bot
+          image: ubot-bot:latest   # напр. gcr.io/PROJECT_ID/ubot-bot:latest
+          env:
+            - name: TELEGRAM_API_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-api-id
+            - name: TELEGRAM_API_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-api-hash
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-bot-token
+            - name: ALLOWED_USER_IDS
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: allowed-user-ids
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: redis-url
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: Always
+---
+# Секрет створюється окремо, напр.:
+# kubectl create secret generic ubot-secrets \
+#   --from-literal=telegram-api-id=... \
+#   --from-literal=telegram-api-hash=... \
+#   --from-literal=telegram-bot-token=... \
+#   --from-literal=allowed-user-ids=292188676,8418087262 \
+#   --from-literal=redis-url=redis://redis:6379/0

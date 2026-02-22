@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubot
+  labels:
+    app: ubot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubot
+  template:
+    metadata:
+      labels:
+        app: ubot
+    spec:
+      containers:
+        - name: ubot
+          image: ubot:latest   # замінити на свій registry, напр. gcr.io/PROJECT_ID/ubot:latest
+          env:
+            - name: TELEGRAM_API_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-api-id
+            - name: TELEGRAM_API_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-api-hash
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: ubot-secrets
+                  key: telegram-bot-token
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      restartPolicy: Always
+# Секрет ubot-secrets створюється окремо (див. k8s/README.md)
