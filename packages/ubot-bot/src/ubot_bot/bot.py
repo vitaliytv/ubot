@@ -48,17 +48,24 @@ def _allowed_user_ids() -> set[int]:
 async def handle_message(
     event: NewMessage.Event, *, allowed_user_ids: set[int]
 ) -> None:
-    """При PDF — пушимо задачу в Redis і відповідаємо. Тільки для дозволених user_id."""
+    """При PDF (пряме або переслане з інших чатів) — пушимо задачу в Redis. Тільки для дозволених user_id."""
     if allowed_user_ids and event.sender_id not in allowed_user_ids:
         await event.reply("Доступ до бота обмежено.")
         return
     message = event.message
     if not message.media or not _is_pdf_document(message.media):
         return
+    # Підтримуємо і прямі повідомлення, і переслані користувачем боту з інших чатів
     chat_id = event.chat_id
     message_id = message.id
-    logger.info("Отримано PDF (chat_id=%s message_id=%s)", chat_id, message_id)
+    logger.info(
+        "Отримано PDF (chat_id=%s message_id=%s)%s",
+        chat_id,
+        message_id,
+        " [переслано]" if message.forward else "",
+    )
     try:
+        await event.reply("📋 Завантажую файл…")
         raw = await event.client.download_media(message.media, bytes)
         if not isinstance(raw, bytes):
             raw = raw.read() if hasattr(raw, "read") else b""
@@ -129,9 +136,15 @@ async def run_bot(
         allowed_user_ids = _allowed_user_ids()
     client = create_client(api_id, api_hash, bot_token)
     await client.start(bot_token=bot_token)
+    # Прямі повідомлення з медіа
     client.add_event_handler(
         lambda e: handle_message(e, allowed_user_ids=allowed_user_ids),
-        NewMessage(incoming=True, func=lambda e: bool(e.message.media)),
+        NewMessage(incoming=True, forwards=False, func=lambda e: bool(e.message.media)),
+    )
+    # Переслані боту з інших чатів (forwards=True, інакше не приходять події)
+    client.add_event_handler(
+        lambda e: handle_message(e, allowed_user_ids=allowed_user_ids),
+        NewMessage(incoming=True, forwards=True, func=lambda e: bool(e.message.media)),
     )
     me = await client.get_me()
     logger.info("Бот запущено: @%s", me.username)

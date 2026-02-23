@@ -1,14 +1,17 @@
 # Збирати з кореня репо: docker build -f packages/ubot-extract-from-pdf/Dockerfile .
 # Копіюємо лише ubot-queue + цей пакет; pyproject фільтруємо під цей workspace.
-FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
+FROM ghcr.io/astral-sh/uv:python3.14-alpine AS builder
 WORKDIR /app
+# pymupdf збирається з вихідників — потрібен C-компілятор та залежності MuPDF
+RUN apk add --no-cache build-base musl-dev freetype-dev libjpeg-turbo-dev openjpeg-dev
 COPY pyproject.toml uv.lock ./
 COPY packages/ubot-queue ./packages/ubot-queue
 COPY packages/ubot-extract-from-pdf ./packages/ubot-extract-from-pdf
 COPY scripts/filter-workspace-pyproject.py ./
 RUN python3 filter-workspace-pyproject.py ubot-extract-from-pdf && uv lock && uv sync --package ubot-extract-from-pdf --no-dev
 
-FROM python:3.14-slim-bookworm
+FROM python:3.14-alpine
+RUN apk add --no-cache freetype libjpeg-turbo openjpeg
 WORKDIR /app
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/packages /app/packages

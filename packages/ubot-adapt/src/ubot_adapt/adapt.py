@@ -75,4 +75,16 @@ def adapt_text(text: str) -> str:
         pad_token_id=tokenizer.eos_token_id,
     )
     reply = tokenizer.decode(out[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True)
-    return reply.strip()
+    reply = reply.strip()
+    input_tokens = inputs["input_ids"].shape[1]
+    output_tokens = out.shape[1] - input_tokens
+    logger.info(
+        "Адаптація: вхід %d токенів, згенеровано %d токенів, результат %d символів",
+        input_tokens,
+        output_tokens,
+        len(reply),
+    )
+    if not reply:
+        raw = tokenizer.decode(out[0][inputs["input_ids"].shape[1] :], skip_special_tokens=False)
+        logger.warning("Модель повернула порожній текст після strip. Сирий вивід (первые 200 сим): %r", raw[:200])
+    return reply

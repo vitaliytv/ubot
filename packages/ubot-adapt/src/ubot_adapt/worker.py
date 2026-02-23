@@ -24,7 +24,11 @@ def process_one_task() -> bool:
         adapted = adapt_text(text)
         if not adapted.strip():
             adapted = text
-            logger.warning("Модель повернула порожній результат, відправляю оригінал")
+            logger.warning(
+                "Модель повернула порожній результат, відправляю оригінал (chat_id=%s, len=%d)",
+                chat_id,
+                len(text),
+            )
         out_name = f"{filename_base}_adapted.txt"
         push_outbox_text(chat_id, message_id, f"📋 Відправляю адаптований файл {out_name}…")
         push_outbox_file(chat_id, message_id, adapted, out_name)

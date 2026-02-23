@@ -1,0 +1,4 @@
+{
+  "gitai.enableCheckpointLogging": true,
+  "gitai.experiments.aiTabTracking": true
+}

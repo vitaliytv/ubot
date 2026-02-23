@@ -35,11 +35,12 @@ bot = "uv run ubot-bot"
 extract-from-pdf = "uv run ubot-extract-from-pdf"
 adapt = "uv run ubot-adapt"
 test = [
-    { cmd = "uv run --project packages/ubot-queue pytest -q" },
-    { cmd = "uv run --project packages/ubot-bot pytest -q" },
-    { cmd = "uv run --project packages/ubot-extract-from-pdf pytest -q" },
-    { cmd = "uv run --project packages/ubot-adapt pytest -q" },
+    { cmd = "uv run pytest -q", cwd = "packages/ubot-queue" },
+    { cmd = "uv run pytest -q", cwd = "packages/ubot-bot" },
+    { cmd = "uv run pytest -q", cwd = "packages/ubot-extract-from-pdf" },
+    { cmd = "uv run pytest -q", cwd = "packages/ubot-adapt" },
 ]
+test-adapt = { cmd = "uv run pytest -q", cwd = "packages/ubot-adapt" }
 
 [tool.ruff]
 target-version = "py314"

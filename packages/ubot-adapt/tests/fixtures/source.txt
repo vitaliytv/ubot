@@ -1,0 +1,30 @@
+Kubernetes: Building and Running AI Agents for Production
+
+Chapter 1: Introduction to AI Agents and MCP
+
+Artificial intelligence (AI) is moving beyond simple content creation or
+chatbots into something far more powerful: AI agents. Instead of just
+answering questions, agents can reason about goals, plan a sequence
+of steps, and act on behalf of humans or other systems to accomplish
+the goal. They do this by connecting to "tools": the APIs, data sources,
+and workflows that give them the ability to affect the real world.
+
+Operating a couple of services is one thing, but operating dozens of them
+across teams led to chaos. AI agents fit the same pattern. They are
+distributed, ephemeral, and networked workloads that need to scale up
+or down depending on demand. They need secure access to
+data and tools, often on behalf of users. They need to be
+observable so teams can understand and eventually trust what they're
+doing. That's why Kubernetes is such a natural place to run them.
+
+Kubernetes alone isn't enough. Out of the box, it doesn't
+address agent-specific needs:
+- Agents need controlled, dynamic, context-aware policy
+  enforcement as they access tools and data on behalf of users
+- Teams need visibility into not just whether an agent is running,
+  but what it is reasoning about, which tools it is calling, and why
+  it is making certain decisions
+- Platform teams need to enforce guardrails so agents operate
+  safely, consistently, and within organizational policies.
+Without these, agents remain risky experiments rather than production-
+grade systems. Let's take a closer look.

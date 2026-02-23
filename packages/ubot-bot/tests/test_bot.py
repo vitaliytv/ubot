@@ -78,6 +78,8 @@ async def test_handle_message_pdf_pushes_task_and_replies() -> None:
         assert call.kwargs["filename"] == "file.pdf"
         assert isinstance(call.kwargs["pdf_base64"], str)
         assert len(call.kwargs["pdf_base64"]) > 0
-        event.reply.assert_called_once_with(
+        assert event.reply.call_count == 2
+        event.reply.assert_any_call("📋 Завантажую файл…")
+        event.reply.assert_any_call(
             "Задачу додано в чергу. Текстовий файл прийде незабаром."
         )
