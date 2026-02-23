@@ -8,16 +8,24 @@ dependencies = [
     "ubot-bot",
     "ubot-extract-from-pdf",
     "ubot-adapt",
+    "ubot-queue",
     "poethepoet>=0.25.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
 ]
 
 [tool.uv.sources]
 ubot-bot = { workspace = true }
 ubot-extract-from-pdf = { workspace = true }
 ubot-adapt = { workspace = true }
+ubot-queue = { workspace = true }
 
 [tool.uv.workspace]
-members = ["packages/ubot-bot", "packages/ubot-extract-from-pdf", "packages/ubot-adapt"]
+members = ["packages/ubot-bot", "packages/ubot-extract-from-pdf", "packages/ubot-adapt", "packages/ubot-queue"]
 
 [tool.poe]
 envfile = ".env"
@@ -26,6 +34,12 @@ envfile = ".env"
 bot = "uv run ubot-bot"
 extract-from-pdf = "uv run ubot-extract-from-pdf"
 adapt = "uv run ubot-adapt"
+test = [
+    { cmd = "uv run --project packages/ubot-queue pytest -q" },
+    { cmd = "uv run --project packages/ubot-bot pytest -q" },
+    { cmd = "uv run --project packages/ubot-extract-from-pdf pytest -q" },
+    { cmd = "uv run --project packages/ubot-adapt pytest -q" },
+]
 
 [tool.ruff]
 target-version = "py314"

@@ -1,14 +1,14 @@
-"""Unit-тести черги адаптації (мок Redis)."""
+"""Unit-тести черги адаптації (мок Redis через ubot_queue)."""
 
 from unittest.mock import patch
 
 import pytest
 
-from ubot_adapt.queue import ADAPT_TASKS_KEY, pop_adapt_task
+from ubot_queue import ADAPT_TASKS_KEY, pop_adapt_task
 
 
 def test_pop_adapt_task_returns_none_when_empty() -> None:
-    with patch("ubot_adapt.queue.get_redis_client") as mock_get:
+    with patch("ubot_queue.queue.get_redis_client") as mock_get:
         mock_client = mock_get.return_value
         mock_client.brpop.return_value = None
         result = pop_adapt_task(timeout=1)
@@ -16,7 +16,7 @@ def test_pop_adapt_task_returns_none_when_empty() -> None:
 
 
 def test_pop_adapt_task_returns_parsed_payload() -> None:
-    with patch("ubot_adapt.queue.get_redis_client") as mock_get:
+    with patch("ubot_queue.queue.get_redis_client") as mock_get:
         mock_client = mock_get.return_value
         mock_client.brpop.return_value = (
             ADAPT_TASKS_KEY,

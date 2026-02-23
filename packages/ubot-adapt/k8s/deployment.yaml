@@ -20,21 +20,6 @@ spec:
         - name: ubot-adapt
           image: ubot-adapt:latest   # напр. gcr.io/PROJECT_ID/ubot-adapt:latest
           env:
-            - name: TELEGRAM_API_ID
-              valueFrom:
-                secretKeyRef:
-                  name: ubot-secrets
-                  key: telegram-api-id
-            - name: TELEGRAM_API_HASH
-              valueFrom:
-                secretKeyRef:
-                  name: ubot-secrets
-                  key: telegram-api-hash
-            - name: TELEGRAM_BOT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: ubot-secrets
-                  key: telegram-bot-token
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:

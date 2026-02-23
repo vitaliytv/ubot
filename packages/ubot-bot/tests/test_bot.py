@@ -65,11 +65,19 @@ async def test_handle_message_pdf_pushes_task_and_replies() -> None:
     event.message.id = 1
     event.message.media = MagicMock()
     event.reply = AsyncMock()
+    event.client = MagicMock()
+    event.client.download_media = AsyncMock(return_value=b"pdf bytes")
     with patch("ubot_bot.bot._is_pdf_document", return_value=True), patch(
-        "ubot_bot.bot.push_pdf_task"
-    ) as mock_push:
+        "ubot_bot.bot._get_pdf_filename", return_value="file.pdf"
+    ), patch("ubot_bot.bot.push_pdf_task") as mock_push:
         await handle_message(event, allowed_user_ids={292188676})
-        mock_push.assert_called_once_with(chat_id=100, message_id=1)
+        mock_push.assert_called_once()
+        call = mock_push.call_args
+        assert call.kwargs["chat_id"] == 100
+        assert call.kwargs["message_id"] == 1
+        assert call.kwargs["filename"] == "file.pdf"
+        assert isinstance(call.kwargs["pdf_base64"], str)
+        assert len(call.kwargs["pdf_base64"]) > 0
         event.reply.assert_called_once_with(
             "Задачу додано в чергу. Текстовий файл прийде незабаром."
         )

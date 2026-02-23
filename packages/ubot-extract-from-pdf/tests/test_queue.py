@@ -1,14 +1,14 @@
-"""Unit-тести черги (мок Redis)."""
+"""Unit-тести черги (мок Redis через ubot_queue)."""
 
 from unittest.mock import patch
 
 import pytest
 
-from ubot_extract_from_pdf.queue import ADAPT_TASKS_KEY, push_adapt_task
+from ubot_queue import ADAPT_TASKS_KEY, push_adapt_task
 
 
 def test_push_adapt_task_calls_lpush() -> None:
-    with patch("ubot_extract_from_pdf.queue.get_redis_client") as mock_get:
+    with patch("ubot_queue.queue.get_redis_client") as mock_get:
         mock_client = mock_get.return_value
         push_adapt_task(
             chat_id=100,

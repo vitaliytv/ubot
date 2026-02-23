@@ -29,21 +29,6 @@ spec:
         - name: ubot-extract-from-pdf
           image: ubot-extract-from-pdf:latest   # напр. gcr.io/PROJECT_ID/ubot-extract-from-pdf:latest
           env:
-            - name: TELEGRAM_API_ID
-              valueFrom:
-                secretKeyRef:
-                  name: ubot-secrets
-                  key: telegram-api-id
-            - name: TELEGRAM_API_HASH
-              valueFrom:
-                secretKeyRef:
-                  name: ubot-secrets
-                  key: telegram-api-hash
-            - name: TELEGRAM_BOT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: ubot-secrets
-                  key: telegram-bot-token
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:

@@ -4,8 +4,7 @@ version = "0.1.0"
 description = "Воркер адаптації тексту (Llama-3.1-8B-Instruct)"
 requires-python = ">=3.14"
 dependencies = [
-    "telethon>=1.36.0",
-    "redis>=5.0.0",
+    "ubot-queue",
     "transformers>=4.45.0",
     "torch>=2.0.0",
     "accelerate>=0.33.0",
